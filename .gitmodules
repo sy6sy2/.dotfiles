@@ -1,0 +1,18 @@
+[submodule "zsh/.zsh/plugins/zsh-syntax-highlighting"]
+	path = zsh/.zsh/plugins/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting
+[submodule "zsh/.zsh/plugins/zsh-bd"]
+	path = zsh/.zsh/plugins/zsh-bd
+	url = https://github.com/Tarrasch/zsh-bd
+[submodule "zsh/.zsh/plugins/zsh-autosuggestions"]
+	path = zsh/.zsh/plugins/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
+[submodule "zsh/.zsh/plugins/zsh-you-should-use"]
+	path = zsh/.zsh/plugins/zsh-you-should-use
+	url = https://github.com/MichaelAquilina/zsh-you-should-use
+[submodule "zsh/.zsh/plugins/zsh-bat"]
+	path = zsh/.zsh/plugins/zsh-bat
+	url = https://github.com/fdellwing/zsh-bat
+[submodule "zsh/.zsh/plugins/zsh-ssh"]
+	path = zsh/.zsh/plugins/zsh-ssh
+	url = https://github.com/sunlei/zsh-ssh

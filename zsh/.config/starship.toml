@@ -1,0 +1,120 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Sources:
+# * https://www.adamdehaven.com/snippets/how-to-customize-your-shell-prompt-with-starship
+
+format = """\
+$os\
+[](bg:directory_bg fg:os_bg)\
+$directory\
+[](bg:git_bg fg:directory_bg)\
+[$git_branch$git_commit$git_state$git_metrics$git_status](bg:git_bg)\
+[](fg:git_bg)\
+$fill\
+[](fg:status_bg)\
+[$status](fg:status_fg bg:status_bg)\
+$all\
+$line_break\
+$character\
+"""
+
+
+# Insert a blank line between shell prompts
+add_newline = true
+
+# Set 'foo' as custom color palette
+palette = 'foo'
+
+# Define custom colors
+[palettes.foo]
+directory_bg = "#3B76F0"
+directory_fg = "#FFFFFF"
+
+git_bg = "#C69500"
+git_fg = "#000000"
+
+status_bg = "#2E3436"
+status_fg = "#FFFFFF"
+
+os_bg = "#2E3436"
+os_fg = "#FFFFFF"
+
+[aws]
+disabled = true
+
+[time]
+disabled = true
+
+[fill]
+symbol = "·"
+
+[python]
+format = '[ ${symbol}${pyenv_prefix}(${version} )(\($virtualenv\)) ]($style)'
+symbol = ' '
+detect_files = []
+detect_extensions = []
+style = "fg:#F6CB4E bg:#37709E"
+
+
+[os]
+disabled = false
+format = '[ $symbol ]($style)'
+style = "fg:os_fg bg:os_bg"
+[os.symbols]
+Macos = ""
+
+# [custom.os_separator]
+# format = "[](fg:directory_bg bg:git_bg)"
+# when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+
+# [custom.directory_separator_git]
+# format = "[](fg:directory_bg bg:git_bg)"
+# when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+
+# [custom.directory_separator_not_git]
+# format = "[](fg:directory_bg)"
+# when = "! git rev-parse --is-inside-work-tree > /dev/null 2>&1"
+
+# [custom.git_separator_git]
+# format = "[](fg:git_bg)"
+# when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+
+# [custom.left_status]
+# format = "[](fg:git_bg)"
+# when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+
+
+[status]
+disabled = false
+symbol = "✘"
+success_symbol = ""
+format = "[$symbol $status]($style) "
+style = "fg:status_fg bg:status_bg"
+
+[directory]
+format = "[ ﱮ $path ]($style)"
+style = "fg:directory_fg bg:directory_bg"
+truncate_to_repo = false
+
+[git_branch]
+format = '[ $symbol$branch(:$remote_branch) ]($style)'
+symbol = "  "
+style = "fg:git_fg bg:git_bg"
+
+[git_status]
+format = '[$all_status]($style)'
+style = "fg:git_fg bg:git_bg"
+
+[git_metrics]
+format = "([+$added]($added_style) )([-$deleted]($deleted_style) )"
+added_style = "fg:git_fg bg:git_bg"
+deleted_style = "fg:git_fg bg:git_bg"
+disabled = false
+
+[cmd_duration]
+format = "[  $duration ]($style)"
+style = "fg:#000000 bg:#CA9D00"
+
+
+
