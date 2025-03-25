@@ -6,6 +6,7 @@
 
 format = """\
 $os\
+$hostname\
 [](bg:directory_bg fg:os_bg)\
 $directory\
 [](bg:git_bg fg:directory_bg)\
@@ -40,10 +41,17 @@ status_fg = "#FFFFFF"
 os_bg = "#2E3436"
 os_fg = "#FFFFFF"
 
+[hostname]
+format = '[$hostname ]($style)'
+style = "fg:os_fg bg:os_bg"
+
 [aws]
 disabled = true
 
 [time]
+disabled = true
+
+[username]
 disabled = true
 
 [fill]
@@ -63,6 +71,7 @@ format = '[ $symbol ]($style)'
 style = "fg:os_fg bg:os_bg"
 [os.symbols]
 Macos = ""
+Debian = "🌀"
 
 # [custom.os_separator]
 # format = "[](fg:directory_bg bg:git_bg)"
