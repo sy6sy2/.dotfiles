@@ -151,8 +151,8 @@ source $HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 ## ls
 alias ls="eza --icons=always"
-alias ll='ls -l'
-alias la='ls -alh'
+alias ll='ls -lg'
+alias la='ls -alhg'
 
 ## cd/cp/mv/rm/ls
 alias cp='cp -iv'
