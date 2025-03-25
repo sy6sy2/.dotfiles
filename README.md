@@ -31,6 +31,7 @@ stow zsh
 * https://mac.install.guide/terminal/zshrc-zprofile
 * https://www.freecodecamp.org/news/how-do-zsh-configuration-files-work/
 * https://thevaluable.dev
+* https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/key-bindings.zsh
 
 ### fzf
 

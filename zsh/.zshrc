@@ -5,17 +5,100 @@ fpath=($HOME/.zsh/functions $HOME/.zsh/plugins $HOME/.zsh/plugins/docker-complet
 # Completion
 
 autoload -Uz compinit; compinit
+_comp_options+=(globdots)
 
-setopt MENU_COMPLETE        # Automatically highlight first element of completion menu
+unsetopt menu_complete   # do not autoselect the first completion entry
+setopt auto_menu         # show completion menu on successive tab press
+setopt complete_in_word  # If unset, the cursor is set to the end of the word if completion is started. Otherwise it stays there and completion is done from both ends.
+setopt always_to_end     # If a completion is performed with the cursor within a word, and a full completion is inserted, the cursor is moved to the end of the word. That is, the cursor is moved to the end of the word if either a single match is inserted or menu completion is performed.
+
+## Allow you to select in a menu
+zstyle ':completion:*:*:*:*:*' menu select
 
 ## Define completers
 zstyle ':completion:*' completer _extensions _complete _approximate
 
-## Allow you to select in a menu
-zstyle ':completion:*' menu select
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+
+# disable named-directories autocompletion
+zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories
+
+## Don't complete uninteresting users
+zstyle ':completion:*:*:*:users' ignored-patterns \
+        adm amanda apache at avahi avahi-autoipd beaglidx bin cacti canna \
+        clamav daemon dbus distcache dnsmasq dovecot fax ftp games gdm \
+        gkrellmd gopher hacluster haldaemon halt hsqldb ident junkbust kdm \
+        ldap lp mail mailman mailnull man messagebus mldonkey mysql nagios \
+        named netdump news nfsnobody nobody nscd ntp nut nx obsrun openvpn \
+        operator pcap polkitd postfix postgres privoxy pulse pvm quagga radvd \
+        rpc rpcuser rpm rtkit scard shutdown squid sshd statd svn sync tftp \
+        usbmux uucp vcsa wwwrun xfs '_*'
+
+zstyle '*' single-ignored show
+
+# https://superuser.com/questions/410356/how-do-you-make-zsh-meta-delete-behave-like-bash-to-make-it-delete-a-word-inst
+autoload -U select-word-style
+select-word-style bash
+
+# [Shift-Tab] - move through the completion menu backwards
+bindkey '^[[Z' reverse-menu-complete
+
 
 ## SSH
-source $HOME/.zsh/plugins/zsh-ssh/zsh-ssh.zsh
+############################################################
+# Take all host sections in .ssh/config and offer them for
+# completion as hosts (e.g. for ssh, rsync, scp and the like)
+# Filter out wildcard host sections.
+_ssh_configfile="$HOME/.ssh/config"
+# if [[ -f "$_ssh_configfile" ]]; then
+#   _ssh_hosts=($(
+#     egrep '^Host.*' "$_ssh_configfile" |\
+#     awk '{for (i=2; i<=NF; i++) print $i}' |\
+#     sort |\
+#     uniq |\
+#     grep -v '^*' |\
+#     sed -e 's/\.*\*$//'
+#   ))
+#   zstyle ':completion:*:hosts' hosts $_ssh_hosts
+#   unset _ssh_hosts
+# fi
+# unset _ssh_configfile
+
+############################################################
+# Remove host key from known hosts based on a host section
+# name from .ssh/config
+function ssh_rmhkey {
+  local ssh_configfile="$HOME/.ssh/config"
+  local ssh_host="$1"
+  if [[ -z "$ssh_host" ]]; then return; fi
+  ssh-keygen -R $(grep -A10 "$ssh_host" "$ssh_configfile" | grep -i HostName | head -n 1 | awk '{print $2}')
+}
+compctl -k hosts ssh_rmhkey
+
+############################################################
+# Load SSH key into agent
+function ssh_load_key() {
+  local key="$1"
+  if [[ -z "$key" ]]; then return; fi
+  local keyfile="$HOME/.ssh/$key"
+  local keysig=$(ssh-keygen -l -f "$keyfile")
+  if ( ! ssh-add -l | grep -q "$keysig" ); then
+    ssh-add "$keyfile"
+  fi
+}
+
+############################################################
+# Remove SSH key from agent
+function ssh_unload_key {
+  local key="$1"
+  if [[ -z "$key" ]]; then return; fi
+  local keyfile="$HOME/.ssh/$key"
+  local keysig=$(ssh-keygen -l -f "$keyfile")
+  if ( ssh-add -l | grep -q "$keysig" ); then
+    ssh-add -d "$keyfile"
+  fi
+}
 
 ## Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
@@ -35,6 +118,16 @@ setopt HIST_IGNORE_SPACE                    # Do not record an event starting wi
 setopt HIST_SAVE_NO_DUPS                    # Do not write a duplicate event to the history file.
 setopt HIST_VERIFY                          # Do not execute immediately upon history expansion.
 
+# Start typing + [Up-Arrow] - fuzzy find history forward
+autoload -U up-line-or-beginning-search
+zle -N up-line-or-beginning-search
+bindkey '\e[A' up-line-or-beginning-search
+
+# Start typing + [Down-Arrow] - fuzzy find history backward
+autoload -U down-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey '\e[B' down-line-or-beginning-search
+
 # Navigation
 setopt AUTO_CD                              # Go to folder path without using cd.
 
@@ -45,23 +138,16 @@ setopt PUSHD_SILENT                         # Do not print the directory stack a
 unsetopt CORRECT                            # Spelling correction
 unsetopt EXTENDED_GLOB                      # Not use extended globbing syntax.
 
-source $HOME/.zsh/plugins/zsh-bd/bd.zsh     # bd plugin
 eval "$(zoxide init zsh)"                   # zoxide plugin
-
 
 # Starship prompt
 eval "$(starship init zsh)"
 
-# Syntax highlightinh
-source $HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Autosuggestions
+# zsh-autosuggestions plugin
 source $HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Aliases
-
-## cat/bat
-source $HOME/.zsh/plugins/zsh-bat/zsh-bat.plugin.zsh
 
 ## ls
 alias ls="eza --icons=always"
@@ -168,4 +254,20 @@ fdcl() {
 
 ## You Should Use plugin
 source $HOME/.zsh/plugins/zsh-you-should-use/you-should-use.plugin.zsh
+
+
+# zsh-syntax-highlighting plugin (at the end)
+source $HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+# Created by `pipx` on 2024-11-12 12:36:19
+export PATH="$PATH:/Users/sylvain/.local/bin"
+
+. "$HOME/.cargo/env"
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
