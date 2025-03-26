@@ -101,7 +101,12 @@ function ssh_unload_key {
 }
 
 ## Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    test -e /usr/share/doc/fzf/examples/key-bindings.zsh && source /usr/share/doc/fzf/examples/key-bindings.zsh
+    test -e /usr/share/doc/fzf/examples/completion.zsh && source /usr/share/doc/fzf/examples/completion.zsh
+else
+    source <(fzf --zsh)
+fi
 
 # History
 HISTFILE=~/.zsh_history                     # History filepath
@@ -265,9 +270,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # Created by `pipx` on 2024-11-12 12:36:19
-export PATH="$PATH:/Users/sylvain/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
-. "$HOME/.cargo/env"
+test -e "$HOME/.cargo/env" && source "$HOME/.cargo/env"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
