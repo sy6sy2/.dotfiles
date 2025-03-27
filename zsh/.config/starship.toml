@@ -71,7 +71,8 @@ format = '[ $symbol ]($style)'
 style = "fg:os_fg bg:os_bg"
 [os.symbols]
 Macos = ""
-Debian = "🌀"
+Debian = ""
+Ubuntu = ""
 
 # [custom.os_separator]
 # format = "[](fg:directory_bg bg:git_bg)"
