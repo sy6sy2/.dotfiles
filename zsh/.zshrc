@@ -123,15 +123,20 @@ setopt HIST_IGNORE_SPACE                    # Do not record an event starting wi
 setopt HIST_SAVE_NO_DUPS                    # Do not write a duplicate event to the history file.
 setopt HIST_VERIFY                          # Do not execute immediately upon history expansion.
 
+
+# https://superuser.com/questions/1743561/ssh-breaks-up-line-or-beginning-search-when-the-server-has-older-version-of-zsh
+
 # Start typing + [Up-Arrow] - fuzzy find history forward
 autoload -U up-line-or-beginning-search
 zle -N up-line-or-beginning-search
 bindkey '\e[A' up-line-or-beginning-search
+bindkey "^[OA" up-line-or-beginning-search
 
 # Start typing + [Down-Arrow] - fuzzy find history backward
 autoload -U down-line-or-beginning-search
 zle -N down-line-or-beginning-search
 bindkey '\e[B' down-line-or-beginning-search
+bindkey "^[OB" down-line-or-beginning-search
 
 # Navigation
 setopt AUTO_CD                              # Go to folder path without using cd.
