@@ -5,19 +5,21 @@ fpath=($HOME/.zsh/functions $HOME/.zsh/plugins $HOME/.zsh/plugins/docker-complet
 # Completion
 
 autoload -Uz compinit; compinit
-_comp_options+=(globdots)
 
+setopt globdots          # allow completion to include dotfiles and dotfolders
 unsetopt menu_complete   # do not autoselect the first completion entry
 setopt auto_menu         # show completion menu on successive tab press
 setopt complete_in_word  # If unset, the cursor is set to the end of the word if completion is started. Otherwise it stays there and completion is done from both ends.
 setopt always_to_end     # If a completion is performed with the cursor within a word, and a full completion is inserted, the cursor is moved to the end of the word. That is, the cursor is moved to the end of the word if either a single match is inserted or menu completion is performed.
 
-## Allow you to select in a menu
+## Allow you to select in a menu with arrow keys
 zstyle ':completion:*:*:*:*:*' menu select
 
 ## Define completers
-zstyle ':completion:*' completer _extensions _complete _approximate
+zstyle ':completion:*' completer _extensions _complete
+#_approximate: typo-tolerant completion
 
+## Uses $LS_COLORS for completion coloring
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 
@@ -46,24 +48,6 @@ bindkey '^[[Z' reverse-menu-complete
 
 
 ## SSH
-############################################################
-# Take all host sections in .ssh/config and offer them for
-# completion as hosts (e.g. for ssh, rsync, scp and the like)
-# Filter out wildcard host sections.
-_ssh_configfile="$HOME/.ssh/config"
-# if [[ -f "$_ssh_configfile" ]]; then
-#   _ssh_hosts=($(
-#     egrep '^Host.*' "$_ssh_configfile" |\
-#     awk '{for (i=2; i<=NF; i++) print $i}' |\
-#     sort |\
-#     uniq |\
-#     grep -v '^*' |\
-#     sed -e 's/\.*\*$//'
-#   ))
-#   zstyle ':completion:*:hosts' hosts $_ssh_hosts
-#   unset _ssh_hosts
-# fi
-# unset _ssh_configfile
 
 ############################################################
 # Remove host key from known hosts based on a host section
@@ -74,7 +58,7 @@ function ssh_rmhkey {
   if [[ -z "$ssh_host" ]]; then return; fi
   ssh-keygen -R $(grep -A10 "$ssh_host" "$ssh_configfile" | grep -i HostName | head -n 1 | awk '{print $2}')
 }
-compctl -k hosts ssh_rmhkey
+compdef _hosts ssh_rmhkey
 
 ############################################################
 # Load SSH key into agent
@@ -123,6 +107,7 @@ setopt HIST_IGNORE_SPACE                    # Do not record an event starting wi
 setopt HIST_SAVE_NO_DUPS                    # Do not write a duplicate event to the history file.
 setopt HIST_VERIFY                          # Do not execute immediately upon history expansion.
 
+alias history="fc -l 1"
 
 # https://superuser.com/questions/1743561/ssh-breaks-up-line-or-beginning-search-when-the-server-has-older-version-of-zsh
 
@@ -146,9 +131,9 @@ setopt PUSHD_IGNORE_DUPS                    # Do not store duplicates in the sta
 setopt PUSHD_SILENT                         # Do not print the directory stack after pushd or popd.
 
 unsetopt CORRECT                            # Spelling correction
-unsetopt EXTENDED_GLOB                      # Not use extended globbing syntax.
+# unsetopt EXTENDED_GLOB                      # Not use extended globbing syntax.
 
-eval "$(zoxide init zsh)"                   # zoxide plugin
+eval "$(zoxide init zsh)"                   # zoxide plugin (z command)
 
 # Starship prompt
 eval "$(starship init zsh)"
@@ -261,23 +246,28 @@ fdcl() {
         --preview 'docker compose logs {1} --tail=20'
 }
 
+## Other
+dbsdl() {
+    MD5=$2
+    DST=$1
+    echo "Download folder /mnt/files/${MD5:0:3}/$MD5 from DBS-front in $DST"
+    scp -r cyd-vm-dbs-front-2:/mnt/files/${MD5:0:3}/${MD5}/ ${DST}
+}
 
-## You Should Use plugin
+
+
+# You Should Use plugin
 source $HOME/.zsh/plugins/zsh-you-should-use/you-should-use.plugin.zsh
 
 
 # zsh-syntax-highlighting plugin (at the end)
 source $HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
-# Created by `pipx` on 2024-11-12 12:36:19
-export PATH="$PATH:$HOME/.local/bin"
-
-test -e "$HOME/.cargo/env" && source "$HOME/.cargo/env"
-
+# iTerm2 integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
+# Pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"

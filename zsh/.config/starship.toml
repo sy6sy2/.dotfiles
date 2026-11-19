@@ -15,7 +15,9 @@ $directory\
 $fill\
 [](fg:status_bg)\
 [$status](fg:status_fg bg:status_bg)\
+$cmd_duration\
 $all\
+$time\
 $line_break\
 $character\
 """
@@ -49,9 +51,14 @@ style = "fg:os_fg bg:os_bg"
 disabled = true
 
 [time]
-disabled = true
+disabled = false
+format = "[  $time ]($style)"
+style = "fg:#000000 bg:#CA9D00"
 
 [username]
+disabled = true
+
+[docker_context]
 disabled = true
 
 [fill]
@@ -149,7 +156,7 @@ typechanged = " t${count}"
 disabled = false
 
 [cmd_duration]
-format = "[  $duration ]($style)"
+format = "[  $duration ]($style)"
 style = "fg:#000000 bg:#CA9D00"
 
 
