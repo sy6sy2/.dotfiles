@@ -1,6 +1,8 @@
 # Autoloading functions
 
-fpath=($HOME/.zsh/functions $HOME/.zsh/plugins $HOME/.zsh/plugins/docker-completion $fpath)
+# docker-completion is disabled: OrbStack (sourced in .zprofile) ships an up-to-date _docker.
+# Re-add $HOME/.zsh/plugins/docker-completion here on a machine without OrbStack if needed.
+fpath=($HOME/.zsh/functions $HOME/.zsh/plugins $fpath)
 
 # Completion
 
@@ -133,10 +135,10 @@ setopt PUSHD_SILENT                         # Do not print the directory stack a
 unsetopt CORRECT                            # Spelling correction
 # unsetopt EXTENDED_GLOB                      # Not use extended globbing syntax.
 
-eval "$(zoxide init zsh)"                   # zoxide plugin (z command)
+(( $+commands[zoxide] )) && eval "$(zoxide init zsh)"   # zoxide plugin (z command)
 
 # Starship prompt
-eval "$(starship init zsh)"
+(( $+commands[starship] )) && eval "$(starship init zsh)"
 
 
 # zsh-autosuggestions plugin
@@ -177,8 +179,8 @@ alias ga='git add'
 alias gp='git push'
 alias gpo='git push origin'
 alias gtd='git tag --delete'
-alias gtdr='git tag --delete origin'
-alias gr='git branch -r'
+alias gtdr='git push --delete origin'
+alias gbr='git branch -r'
 alias gplo='git pull origin'
 alias gb='git branch '
 alias gc='git commit'
@@ -270,4 +272,4 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 # Pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - zsh)"
+(( $+commands[pyenv] )) && eval "$(pyenv init - zsh)"

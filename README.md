@@ -8,9 +8,12 @@
 * fzf: `brew install fzf`
 * bat: `brew install bat`
 * eza: `brew install eza`
+* fd: `brew install fd`
+* pyenv: `brew install pyenv`
+* GNU Stow: `brew install stow`
 
 
-## Hot to use it
+## How to use it
 
 ```bash
 # Assuming zsh is already your default shell
